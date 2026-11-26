@@ -36,6 +36,7 @@ h1,h2,h3,.cond{font-family:"Barlow Condensed","Arial Narrow",sans-serif}
 .hero{background:var(--redd);background:linear-gradient(160deg,#b3141c,#7a0c12 70%);color:#fff7f2}
 .hero-in{max-width:1240px;margin:auto;display:grid;gap:22px}
 h1{font-size:clamp(34px,6vw,52px);line-height:1.05;margin:0;font-weight:800;text-wrap:balance}
+.sub{margin:8px 0 0;font:italic 600 clamp(20px,3vw,27px)/1.2 "Source Serif 4",Georgia,serif;color:#ffe2db}
 .lede{max-width:66ch;margin:0;color:#ffe2db;font-size:17px}
 .stats{display:flex;flex-wrap:wrap;gap:8px 26px;font-family:"Barlow Condensed",sans-serif;font-size:19px;color:#ffd5cc}
 .stats b{font-size:30px;color:#fff;font-weight:700;margin-right:6px}
@@ -83,6 +84,14 @@ ol.tracks{list-style:none;margin:0;padding:0}
 .bk .au{color:var(--mute);font-size:15px}
 .bk .nt{flex-basis:100%;font-size:14px;color:var(--mute)}
 .none{color:var(--mute);font-size:14px}
+.rcol{display:grid;gap:8px}
+.refs{display:grid;gap:4px}
+.ref{display:flex;gap:8px;align-items:baseline;font-size:14px;color:var(--mute);line-height:1.4}
+.ref b{color:var(--ink);font-weight:600}
+.rt{flex:none;font:600 12px/1 "Barlow Condensed",sans-serif;padding:3px 6px;border-radius:4px;background:var(--chip);color:var(--ink);letter-spacing:.03em}
+.ahead{align-items:center}
+.badge{flex:none;filter:drop-shadow(0 3px 5px #0004);margin-right:4px}
+@media(max-width:640px){.tr .rcol{grid-column:2}.badge{width:64px;height:64px}}
 a.rd{flex-basis:100%;display:inline-flex;align-items:center;gap:4px;width:max-content;max-width:100%;font:600 15px "Barlow Condensed",sans-serif;color:light-dark(#b3141c,#ff7a7a);text-decoration:underline;text-underline-offset:3px;padding:4px 0;min-height:32px}
 a.rd span{font-weight:500;color:var(--mute)}
 .rc a.rd{grid-column:2}
@@ -102,15 +111,15 @@ a.rd span{font-weight:500;color:var(--mute)}
 .meter{height:8px;background:var(--chip);border-radius:6px;overflow:hidden;margin-top:6px;max-width:360px}.meter i{display:block;height:100%;background:var(--red)}
 .empty-state{padding:40px 0;color:var(--mute);font-style:italic}
 footer{max-width:1240px;margin:auto;padding:0 max(5vw,16px) 48px;color:var(--mute);font-size:14px}
-@media(max-width:640px){.tr{grid-template-columns:2em minmax(0,1fr)}.tr .books,.tr .none{grid-column:2}.ahead h2{font-size:28px}.shelf{min-height:190px}.spine{width:28px}}
+@media(max-width:640px){.tr{grid-template-columns:2em minmax(0,1fr)}.tr .rcol{grid-column:2}.ahead h2{font-size:28px}.shelf{min-height:190px}.spine{width:28px}}
 @media(prefers-reduced-motion:reduce){.spine{transition:none}}
 </style>
 </head>
 <body>
 <header class="hero band">
  <div class="hero-in">
-  <h1>Neil Peart's bookshelf: the reading behind Rush's lyrics</h1>
-  <p class="lede">Every track on every Rush studio album, with the novels, poems, stories and essays Peart drew on. The shelf below restocks for the album you choose; tap a spine to find it in the reading list.</p>
+  <div><h1>Neil Peart's Bookshelf</h1><p class="sub">The reading behind Rush's lyrics</p></div>
+  <p class="lede">Every track on every Rush studio album, with the novels, poems, stories and essays Peart drew on, plus the films, TV and other sources behind a few songs. The shelf below restocks for the album you choose; tap a spine to find it in the reading list.</p>
   <div class="stats" id="stats"></div>
   <div class="shelfwrap"><div class="shelf" id="shelf" aria-label="Books for the current selection"></div></div>
  </div>
@@ -132,7 +141,7 @@ footer{max-width:1240px;margin:auto;padding:0 max(5vw,16px) 48px;color:var(--mut
    </select>
    <label class="tog"><input type="checkbox" id="only"> Only tracks with a book</label>
   </div>
-  <div class="legend"><span class="cf c">Confirmed</span> Peart said so, or the liner notes credit it <span class="cf l">Strong</span> title or quotation lifted directly <span class="cf p">Possible</span> allusion noted by fans and scholars, unconfirmed</div>
+  <div class="legend"><span class="cf c">Confirmed</span> Peart said so, or the liner notes credit it <span class="cf l">Strong</span> title or quotation lifted directly <span class="cf p">Possible</span> allusion noted by fans and scholars, unconfirmed <span class="rt">Film</span> grey tags mark non-book sources such as film, TV and radio</div>
  </div>
 </div>
 
@@ -170,7 +179,7 @@ const ALBUMS=[
 {t:"2112",y:1976,note:"The liner notes dedicate the title suite to \"the genius of Ayn Rand.\"",tr:[
 ["2112",[ANTHEM("A rediscovered art outlawed by a collective is lifted straight from Rand's plot; credited in the liner notes.")]],
 ["A Passage to Bangkok"],
-["The Twilight Zone",null,"Drawn from Rod Serling's TV series, not a book"],
+["The Twilight Zone"],
 ["Lessons",null,"Lyrics by Alex Lifeson"],
 ["Tears",null,"Lyrics by Geddy Lee"],
 ["Something for Nothing",null,"Sparked by graffiti in Los Angeles: \"Freedom isn't free\""]]},
@@ -178,7 +187,7 @@ const ALBUMS=[
 ["A Farewell to Kings",[B("A Farewell to Arms","Ernest Hemingway","novel","l","Title wordplay.")]],
 ["Xanadu",[B("Kubla Khan","Samuel Taylor Coleridge","poem","c","Peart came to it via the opening of Citizen Kane; the lyric borrows Coleridge's imagery.")]],
 ["Closer to the Heart",null,"Co-written with Peter Talbot"],
-["Cinderella Man",null,"Lyrics by Geddy Lee; inspired by the film Mr. Deeds Goes to Town"],
+["Cinderella Man",null,"Lyrics by Geddy Lee"],
 ["Madrigal"],
 ["Cygnus X-1 Book I: The Voyage",[B("Don Quixote","Miguel de Cervantes","novel","p","The ship is named Rocinante, after Quixote's horse."),B("Travels with Charley","John Steinbeck","travelogue","p","Steinbeck's camper was also called Rocinante.")]]]},
 {t:"Hemispheres",y:1978,tr:[
@@ -201,10 +210,10 @@ const ALBUMS=[
 ["Witch Hunt"],["Vital Signs"]]},
 {t:"Signals",y:1982,tr:[
 ["Subdivisions"],["The Analog Kid"],["Chemistry",null,"Lyrics co-written by all three"],["Digital Man"],
-["The Weapon",null,"Paraphrases the Lord's Prayer and FDR's \"nothing to fear but fear itself\""],
+["The Weapon",null,"Also paraphrases the Lord's Prayer"],
 ["New World Man"],
 ["Losing It",[B("For Whom the Bell Tolls","Ernest Hemingway","novel","l","The writer of the second verse is Hemingway; the song ends \"for you, the bell tolls.\""),B("Devotions upon Emergent Occasions","John Donne","prose","p","Source of Hemingway's title phrase.")]],
-["Countdown",null,"About the first Space Shuttle launch"]]},
+["Countdown"]]},
 {t:"Grace Under Pressure",y:1984,note:"The title is <b>Hemingway's</b> definition of courage.",tr:[
 ["Distant Early Warning"],["Afterimage"],["Red Sector A"],["The Enemy Within"],
 ["The Body Electric",[B("I Sing the Body Electric","Walt Whitman","poem","p","Title via Whitman (and Bradbury's Twilight Zone episode).")]],
@@ -255,8 +264,8 @@ const ALBUMS=[
 {t:"Vapor Trails",y:2002,note:"Peart named <b>Edward Abbey, Walt Whitman and Thomas Wolfe</b> as the album's main literary influences.",tr:[
 ["One Little Victory"],
 ["Ceiling Unlimited",[WOLFE("Peart cited Wolfe (and Oscar Wilde) for this song."),B("Through the Looking-Glass","Lewis Carroll","novel","p","Fan-noted echo.")]],
-["Ghost Rider",null,"From Peart's own 55,000-mile motorcycle journey, later his book Ghost Rider"],
-["Peaceable Kingdom",null,"Named after Edward Hicks's painting"],
+["Ghost Rider"],
+["Peaceable Kingdom"],
 ["The Stars Look Down",[B("The Stars Look Down","A.J. Cronin","novel","c","Peart took the title; he said he hadn't read the book.")]],
 ["How It Is",[WOLFE("Peart cited Wolfe's novel.")]],
 ["Vapor Trail",[B("Black Sun","Edward Abbey","novel","c","Peart said it influenced certain lines."),B("Funeral Blues","W.H. Auden","poem","c","Peart cited Auden.")]],
@@ -288,6 +297,21 @@ const ALBUMS=[
 ["The Garden",[CAND("c","Ends where Candide ends: cultivate your garden.")]]]}
 ];
 
+// Non-book sources: [type, title, detail], keyed "Album|Track"
+const REFS={
+"2112|The Twilight Zone":[["TV","The Twilight Zone","Rod Serling's anthology series (1959–64); the band called it one of the most creative shows ever made"]],
+"A Farewell to Kings|Xanadu":[["Film","Citizen Kane","Orson Welles, 1941; its opening lines from \"Kubla Khan\" led Peart to the poem"]],
+"A Farewell to Kings|Cinderella Man":[["Film","Mr. Deeds Goes to Town","Frank Capra, 1936; a small-town man inherits a fortune"]],
+"A Farewell to Kings|Cygnus X-1 Book I: The Voyage":[["Science","Cygnus X-1","The X-ray source in Cygnus, one of the first objects identified as a black hole"]],
+"Permanent Waves|The Spirit of Radio":[["Radio","CFNY-FM, Toronto","The song takes its title from the station's slogan"],["Song","The Sound of Silence","Simon & Garfunkel; echoed in the reggae coda"]],
+"Permanent Waves|Jacob's Ladder":[["Nature","Crepuscular rays","Sunbeams through clouds, nicknamed Jacob's ladder"]],
+"Moving Pictures|YYZ":[["Signal","Toronto Pearson airport's identifier","The intro is the code Y-Y-Z tapped out in Morse"]],
+"Signals|The Weapon":[["Speech","FDR's first inaugural address","1933: \"the only thing we have to fear is fear itself\""]],
+"Signals|Countdown":[["Event","First Space Shuttle launch (STS-1)","Columbia, April 1981; the band watched from Cape Canaveral"]],
+"Grace Under Pressure|The Body Electric":[["TV","\"I Sing the Body Electric\" (The Twilight Zone)","1962 episode written by Ray Bradbury, borrowing Whitman's title"]],
+"Vapor Trails|Peaceable Kingdom":[["Painting","The Peaceable Kingdom","Edward Hicks's series of paintings of Isaiah's prophecy of peace"]],
+"Vapor Trails|Ghost Rider":[["Journey","Peart's 55,000-mile motorcycle ride","Later written up in his book Ghost Rider (2002)"]]
+};
 const G=id=>["https://www.gutenberg.org/ebooks/"+id,"Project Gutenberg"];
 const LINKS={
 "Anthem":G(1250),"A Tale of Two Cities":G(98),"Doctor Faustus":G(779),"The Odyssey":G(1727),"Don Quixote":G(996),
@@ -322,7 +346,13 @@ albumsEl.innerHTML=`<button class="chipbtn" data-a="all" aria-pressed="true">All
 
 function visibleBooks(list){return (list||[]).filter(b=>RANK[b.c]>=RANK[state.conf])}
 function match(a,t,books){const q=state.q;if(!q)return true;
- return [t[0],t[2]||"",a.t,...books.flatMap(b=>[b.t,b.a])].join(" ").toLowerCase().includes(q)}
+ return [t[0],t[2]||"",a.t,...books.flatMap(b=>[b.t,b.a]),...refsFor(a,t).flatMap(r=>[r[1],r[2]])].join(" ").toLowerCase().includes(q)}
+function refsFor(a,t){return REFS[a.t+"|"+t[0]]||[]}
+const refHtml=rs=>rs.length?`<div class="refs">${rs.map(r=>`<div class="ref"><span class="rt">${esc(r[0])}</span><span><b>${esc(r[1])}</b> · ${esc(r[2])}</span></div>`).join("")}</div>`:"";
+const COLS=["#b3141c","#1f3a5f","#c9a227","#3d6b4f","#5b3758","#33658a","#a4442e","#2a5d67","#8c6d46","#4e4e6a","#b5651d","#7a3b2e"];
+function badge(a,i,sz){const c=COLS[i%COLS.length],n=a.t.length>13?a.t.slice(0,12)+"…":a.t;
+ let g="";for(let r=47;r>33;r-=3)g+=`<circle cx="50" cy="50" r="${r}" fill="none" stroke="#fff" stroke-opacity=".07"/>`;
+ return `<svg class="badge" width="${sz}" height="${sz}" viewBox="0 0 100 100" role="img" aria-label="${esc(a.t)} (${a.y})"><circle cx="50" cy="50" r="49" fill="#141012"/>${g}<path d="M18 30a38 38 0 0 1 22-17" stroke="#fff" stroke-opacity=".18" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="50" cy="50" r="31" fill="${c}"/><text x="50" y="45" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="700" font-size="${n.length>9?9:12}" fill="#fff">${esc(n)}</text><text x="50" y="67" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="600" font-size="10" fill="#fff" fill-opacity=".9">${a.y}</text><circle cx="50" cy="54" r="2.6" fill="#141012"/></svg>`}
 function selected(){return state.album==="all"?ALBUMS.map((a,i)=>[a,i]):[[ALBUMS[+state.album],+state.album]]}
 function collect(){const m=new Map();
  selected().forEach(([a])=>a.tr.forEach(t=>{const bs=visibleBooks(t[1]);if(!match(a,t,bs))return;
@@ -339,13 +369,13 @@ function renderStats(books){const tracks=selected().reduce((n,[a])=>n+a.tr.lengt
  document.getElementById("stats").innerHTML=`<span><b>${tracks}</b>tracks</span><span><b>${linked}</b>tied to reading</span><span><b>${books.length}</b>works on the shelf</span><span><b>${books.filter(b=>LINKS[b.t]).length}</b>free to read online</span>`}
 
 function renderTracks(){let html="",shown=0;
- selected().forEach(([a])=>{const rows=a.tr.map((t,i)=>{const bs=visibleBooks(t[1]);
+ selected().forEach(([a,ai])=>{const rows=a.tr.map((t,i)=>{const bs=visibleBooks(t[1]),rs=refsFor(a,t);
    if(state.only&&!bs.length)return"";if(!match(a,t,bs))return"";shown++;
    const note=t[2]?`<small>${esc(t[2])}</small>`:"";
-   const right=bs.length?`<div class="books">${bs.map(b=>`<div class="bk"><i>${esc(b.t)}</i><span class="au">${esc(b.a)} · ${esc(b.k)}</span><span class="cf ${b.c}">${CL[b.c]}</span>${b.n?`<span class="nt">${esc(b.n)}</span>`:""}${link(b)}</div>`).join("")}</div>`:`<div class="none">No book tied to this track</div>`;
-   return `<li class="tr${bs.length?"":" nobook"}"><span class="n">${i+1}</span><span class="t">${esc(t[0])}${note}</span>${right}</li>`}).join("");
+   const right=bs.length?`<div class="books">${bs.map(b=>`<div class="bk"><i>${esc(b.t)}</i><span class="au">${esc(b.a)} · ${esc(b.k)}</span><span class="cf ${b.c}">${CL[b.c]}</span>${b.n?`<span class="nt">${esc(b.n)}</span>`:""}${link(b)}</div>`).join("")}</div>`:(rs.length?"":`<div class="none">No book tied to this track</div>`);
+   return `<li class="tr${bs.length?"":" nobook"}"><span class="n">${i+1}</span><span class="t">${esc(t[0])}${note}</span><div class="rcol">${right}${refHtml(rs)}</div></li>`}).join("");
   if(!rows)return;
-  html+=`<section class="album"><div class="ahead"><h2>${esc(a.t)}</h2><span class="yr">${a.y}</span><span class="ct">${a.tr.length} tracks</span></div>${a.note?`<p class="anote">${a.note}</p>`:""}<ol class="tracks">${rows}</ol></section>`});
+  html+=`<section class="album"><div class="ahead">${badge(a,ai,88)}<h2>${esc(a.t)}</h2><span class="yr">${a.y}</span><span class="ct">${a.tr.length} tracks</span></div>${a.note?`<p class="anote">${a.note}</p>`:""}<ol class="tracks">${rows}</ol></section>`});
  return shown?html:`<p class="empty-state">No tracks match. Try clearing the search or widening the evidence level.</p>`}
 
 function renderList(books){if(!books.length)return `<p class="empty-state">No books match these filters.</p>`;
