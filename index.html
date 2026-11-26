@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neil Peart's Bookshelf</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a fan's well-kept liner-note annotation, literate and exact
+   IDEA: the lyricist's own bookshelf, sitting beside the record sleeves
+   PICTURE: a shelf of book spines that restocks for whichever album is chosen
+   COLOUR and TYPE: starman red field, paper white, ink black, brass for "confirmed"; Barlow Condensed + Source Serif 4
+   LAYOUT: red band with title and shelf, sticky album filter, tracklist cards; reading list as second view */
+:root{color-scheme:light dark;
+--bg:light-dark(#f7f4ef,#141112);--card:light-dark(#fff,#1e1a1b);--ink:light-dark(#171314,#efe9e4);--mute:light-dark(#6b6262,#a59b97);
+--red:#b3141c;--redd:light-dark(#8e0f16,#5e0a0f);--line:light-dark(#e4ddd5,#352e2f);--brass:light-dark(#8a6a12,#d9b552);--chip:light-dark(#efe9e1,#2a2425)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Source Serif 4",Georgia,serif;overflow-x:clip}
+h1,h2,h3,.cond{font-family:"Barlow Condensed","Arial Narrow",sans-serif}
+.band{padding:clamp(24px,4vw,52px) max(5vw,16px)}
+.hero{background:var(--redd);background:linear-gradient(160deg,#b3141c,#7a0c12 70%);color:#fff7f2}
+.hero-in{max-width:1240px;margin:auto;display:grid;gap:22px}
+h1{font-size:clamp(34px,6vw,52px);line-height:1.05;margin:0;font-weight:800;text-wrap:balance}
+.lede{max-width:66ch;margin:0;color:#ffe2db;font-size:17px}
+.stats{display:flex;flex-wrap:wrap;gap:8px 26px;font-family:"Barlow Condensed",sans-serif;font-size:19px;color:#ffd5cc}
+.stats b{font-size:30px;color:#fff;font-weight:700;margin-right:6px}
+.shelfwrap{position:relative;overflow-x:auto;padding:14px 4px 0;scrollbar-width:thin}
+.shelf{display:flex;align-items:flex-end;gap:3px;min-height:230px;padding:0 6px;border-bottom:14px solid #3b2216;box-shadow:0 10px 18px -10px #000a}
+.spine{flex:none;width:34px;border-radius:3px 3px 0 0;cursor:pointer;border:0;padding:10px 0 8px;display:flex;justify-content:center;color:#fff;
+ writing-mode:vertical-rl;transform:rotate(180deg);font:600 13px/1 "Barlow Condensed",sans-serif;letter-spacing:.02em;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+ box-shadow:inset -5px 0 0 #0003,inset 2px 0 0 #fff3;transition:transform .25s}
+.spine:hover,.spine:focus-visible{transform:rotate(180deg) translateY(10px);outline:2px solid #fff}
+.shelf .empty{color:#ffd5cc;align-self:center;font-style:italic;padding:30px}
+.bar{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1240px;margin:auto;padding:12px max(5vw,16px);display:grid;gap:10px}
+.albums{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.albums button{flex:none}
+button,select,input{font:inherit;color:inherit}
+.chipbtn{border:1px solid var(--line);background:var(--chip);border-radius:999px;padding:8px 14px;min-height:40px;cursor:pointer;font:600 15px "Barlow Condensed",sans-serif;white-space:nowrap}
+.chipbtn[aria-pressed=true]{background:var(--red);border-color:var(--red);color:#fff}
+.chipbtn small{font-weight:500;opacity:.75;margin-left:4px}
+.row{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.tabs{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.tabs button{border:0;background:transparent;padding:8px 16px;min-height:44px;cursor:pointer;font:700 16px "Barlow Condensed",sans-serif}
+.tabs button[aria-selected=true]{background:var(--ink);color:var(--bg)}
+input[type=search]{flex:1 1 220px;min-height:44px;font-size:16px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+label.tog{display:flex;gap:8px;align-items:center;cursor:pointer;font-size:15px}
+label.tog input{width:20px;height:20px;accent-color:var(--red)}
+select{min-height:44px;padding:6px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-size:16px}
+:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
+main{max-width:1240px;margin:auto;padding:24px max(5vw,16px) 64px}
+.album{margin-bottom:34px}
+.ahead{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;border-bottom:3px solid var(--ink);padding-bottom:6px}
+.ahead h2{font-size:34px;margin:0;line-height:1.05}
+.ahead .yr{font:600 20px "Barlow Condensed",sans-serif;color:var(--red)}
+.ahead .ct{margin-left:auto;font-size:14px;color:var(--mute)}
+.anote{font-size:15px;color:var(--mute);margin:8px 0 4px;max-width:80ch}
+.anote b{color:var(--ink);font-weight:600}
+ol.tracks{list-style:none;margin:0;padding:0}
+.tr{display:grid;grid-template-columns:2.2em minmax(0,15em) minmax(0,1fr);gap:4px 16px;padding:11px 0;border-bottom:1px solid var(--line);align-items:start}
+.tr .n{font:700 18px "Barlow Condensed",sans-serif;color:var(--mute);text-align:right}
+.tr .t{font:700 20px/1.2 "Barlow Condensed",sans-serif}
+.tr .t small{display:block;font:italic 13px/1.4 "Source Serif 4",serif;color:var(--mute);margin-top:2px}
+.tr.nobook .t{font-weight:500;color:var(--mute)}
+.books{display:grid;gap:6px}
+.bk{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline}
+.bk i{font-weight:600}
+.bk .au{color:var(--mute);font-size:15px}
+.bk .nt{flex-basis:100%;font-size:14px;color:var(--mute)}
+.none{color:var(--mute);font-size:14px}
+a.rd{flex-basis:100%;display:inline-flex;align-items:center;gap:4px;width:max-content;max-width:100%;font:600 15px "Barlow Condensed",sans-serif;color:light-dark(#b3141c,#ff7a7a);text-decoration:underline;text-underline-offset:3px;padding:4px 0;min-height:32px}
+a.rd span{font-weight:500;color:var(--mute)}
+.rc a.rd{grid-column:2}
+.cf{font:600 12.5px/1 "Barlow Condensed",sans-serif;letter-spacing:.03em;padding:3px 7px;border-radius:4px;border:1px solid currentColor;white-space:nowrap}
+.cf.c{color:var(--brass)}.cf.l{color:var(--red)}.cf.p{color:var(--mute)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:var(--mute);align-items:center}
+.rl{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:12px}
+.rc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;scroll-margin-top:150px}
+.rc.flash{outline:3px solid var(--red)}
+.rc input{width:22px;height:22px;margin-top:4px;accent-color:var(--red)}
+.rc h3{margin:0;font-size:22px;line-height:1.1}
+.rc.read h3{text-decoration:line-through;text-decoration-color:var(--red);opacity:.7}
+.rc .au{color:var(--mute);font-size:15px}
+.rc .songs{grid-column:2;font-size:14.5px;display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;margin-top:4px}
+.rc .sg{background:var(--chip);border-radius:4px;padding:2px 7px}
+.progress{font:600 18px "Barlow Condensed",sans-serif;margin:0 0 14px}
+.meter{height:8px;background:var(--chip);border-radius:6px;overflow:hidden;margin-top:6px;max-width:360px}.meter i{display:block;height:100%;background:var(--red)}
+.empty-state{padding:40px 0;color:var(--mute);font-style:italic}
+footer{max-width:1240px;margin:auto;padding:0 max(5vw,16px) 48px;color:var(--mute);font-size:14px}
+@media(max-width:640px){.tr{grid-template-columns:2em minmax(0,1fr)}.tr .books,.tr .none{grid-column:2}.ahead h2{font-size:28px}.shelf{min-height:190px}.spine{width:28px}}
+@media(prefers-reduced-motion:reduce){.spine{transition:none}}
+</style>
+</head>
+<body>
+<header class="hero band">
+ <div class="hero-in">
+  <h1>Neil Peart's bookshelf: the reading behind Rush's lyrics</h1>
+  <p class="lede">Every track on every Rush studio album, with the novels, poems, stories and essays Peart drew on. The shelf below restocks for the album you choose; tap a spine to find it in the reading list.</p>
+  <div class="stats" id="stats"></div>
+  <div class="shelfwrap"><div class="shelf" id="shelf" aria-label="Books for the current selection"></div></div>
+ </div>
+</header>
+
+<div class="bar">
+ <div class="bar-in">
+  <div class="albums" id="albums" role="group" aria-label="Album filter"></div>
+  <div class="row">
+   <div class="tabs" role="tablist">
+    <button role="tab" id="tab-tracks" aria-selected="true">Tracklist</button>
+    <button role="tab" id="tab-list" aria-selected="false">Reading list</button>
+   </div>
+   <input type="search" id="q" placeholder="Search tracks, books or authors" aria-label="Search">
+   <select id="conf" aria-label="Evidence level">
+    <option value="p">All links</option>
+    <option value="l">Confirmed + strong</option>
+    <option value="c">Confirmed only</option>
+   </select>
+   <label class="tog"><input type="checkbox" id="only"> Only tracks with a book</label>
+  </div>
+  <div class="legend"><span class="cf c">Confirmed</span> Peart said so, or the liner notes credit it <span class="cf l">Strong</span> title or quotation lifted directly <span class="cf p">Possible</span> allusion noted by fans and scholars, unconfirmed</div>
+ </div>
+</div>
+
+<main id="main"></main>
+<footer>Compiled from Peart's tour-book essays, liner notes and interviews, Rush fan archives (2112.net Power Windows, Rush Vault) and press coverage. Live albums and compilations are excluded; the <i>Feedback</i> covers EP is included for completeness. "Read free" links go to public-domain or free-to-read texts (Project Gutenberg, Poetry Foundation, Poets.org, MIT Internet Classics Archive, Utne Reader); public-domain status can differ outside the US. Your "read" ticks are saved in this browser only.</footer>
+
+<script>
+{
+const B=(t,a,k,c,n)=>({t,a,k,c,n});
+const LOTR=()=>B("The Lord of the Rings","J.R.R. Tolkien","novel","l");
+const ANTHEM=n=>B("Anthem","Ayn Rand","novella","c",n);
+const PRU=n=>B("The Love Song of J. Alfred Prufrock","T.S. Eliot","poem","c",n);
+const WOLFE=n=>B("Of Time and the River","Thomas Wolfe","novel","c",n);
+const LWF=n=>B("Lady Windermere's Fan","Oscar Wilde","play","p",n);
+const CAND=(c,n)=>B("Candide","Voltaire","novella",c,n);
+
+const ALBUMS=[
+{t:"Rush",y:1974,note:"Recorded before Peart joined the band; lyrics by Geddy Lee and Alex Lifeson, with no literary sources.",tr:[
+["Finding My Way"],["Need Some Love"],["Take a Friend"],["Here Again"],["What You're Doing"],["In the Mood"],["Before and After"],["Working Man"]]},
+{t:"Fly by Night",y:1975,note:"Peart's first album as lyricist: Rand and Tolkien arrive at once.",tr:[
+["Anthem",[ANTHEM("Takes its title and its hymn to the individual from Rand's novella.")]],
+["Best I Can",null,"Lyrics by Geddy Lee"],
+["Beneath, Between & Behind"],
+["By-Tor & the Snow Dog",null,"Named after a joke about road manager Howard Ungerleider's dogs"],
+["Fly by Night",null,"About Peart leaving England to return home"],
+["Making Memories"],
+["Rivendell",[B("The Lord of the Rings","J.R.R. Tolkien","novel","l","Named for the Elven refuge in Middle-earth.")]],
+["In the End",null,"Lyrics by Geddy Lee"]]},
+{t:"Caress of Steel",y:1975,tr:[
+["Bastille Day",[B("A Tale of Two Cities","Charles Dickens","novel","c","Peart pointed to Dickens's French Revolution novel.")]],
+["I Think I'm Going Bald"],
+["Lakeside Park",null,"Memories of Port Dalhousie, Ontario"],
+["The Necromancer",[B("The Lord of the Rings","J.R.R. Tolkien","novel","l","Three travellers, a dark sorcerer, and Tolkien's 'Necromancer' (Sauron)."),B("Doctor Faustus","Christopher Marlowe","play","p","Quoted in the liner-note framing.")]],
+["The Fountain of Lamneth",[B("The Odyssey","Homer","epic poem","p","A life journey told as a voyage."),B("The Fountainhead","Ayn Rand","novel","p","Title echo, unconfirmed.")]]]},
+{t:"2112",y:1976,note:"The liner notes dedicate the title suite to \"the genius of Ayn Rand.\"",tr:[
+["2112",[ANTHEM("A rediscovered art outlawed by a collective is lifted straight from Rand's plot; credited in the liner notes.")]],
+["A Passage to Bangkok"],
+["The Twilight Zone",null,"Drawn from Rod Serling's TV series, not a book"],
+["Lessons",null,"Lyrics by Alex Lifeson"],
+["Tears",null,"Lyrics by Geddy Lee"],
+["Something for Nothing",null,"Sparked by graffiti in Los Angeles: \"Freedom isn't free\""]]},
+{t:"A Farewell to Kings",y:1977,note:"The album title plays on <b>Hemingway's <i>A Farewell to Arms</i></b>.",tr:[
+["A Farewell to Kings",[B("A Farewell to Arms","Ernest Hemingway","novel","l","Title wordplay.")]],
+["Xanadu",[B("Kubla Khan","Samuel Taylor Coleridge","poem","c","Peart came to it via the opening of Citizen Kane; the lyric borrows Coleridge's imagery.")]],
+["Closer to the Heart",null,"Co-written with Peter Talbot"],
+["Cinderella Man",null,"Lyrics by Geddy Lee; inspired by the film Mr. Deeds Goes to Town"],
+["Madrigal"],
+["Cygnus X-1 Book I: The Voyage",[B("Don Quixote","Miguel de Cervantes","novel","p","The ship is named Rocinante, after Quixote's horse."),B("Travels with Charley","John Steinbeck","travelogue","p","Steinbeck's camper was also called Rocinante.")]]]},
+{t:"Hemispheres",y:1978,tr:[
+["Cygnus X-1 Book II: Hemispheres",[B("Powers of Mind","Adam Smith (George Goodman)","nonfiction","c","Peart said the basic idea, left brain versus right brain, came from this book."),B("The Birth of Tragedy","Friedrich Nietzsche","philosophy","l","Apollo (reason) against Dionysus (passion) is Nietzsche's pairing.")]],
+["Circumstances",null,"About Peart's time in London; borrows the French proverb 'plus ça change'"],
+["The Trees",null,"Peart said it came from a cartoon image, not a book"],
+["La Villa Strangiato",null,"Instrumental"]]},
+{t:"Permanent Waves",y:1980,tr:[
+["The Spirit of Radio"],["Freewill"],
+["Jacob's Ladder",[B("Genesis (Jacob's dream, ch. 28)","The Bible","scripture","p","The title image of light breaking through clouds.")]],
+["Entre Nous",[B("The Fountainhead","Ayn Rand","novel","p","Fan-noted echo of Rand's individualism.")]],
+["Different Strings",[B("Self-Reliance","Ralph Waldo Emerson","essay","p","Lyrics by Geddy Lee; link unconfirmed.")],"Lyrics by Geddy Lee"],
+["Natural Science",[B("Sir Gawain and the Green Knight","Anonymous","poem","c","Peart reused ideas from a shelved song based on the poem.")]]]},
+{t:"Moving Pictures",y:1981,tr:[
+["Tom Sawyer",[B("The Adventures of Tom Sawyer","Mark Twain","novel","l","Twain's free spirit as the modern rebel; co-written with poet Pye Dubois.")]],
+["Red Barchetta",[B("A Nice Morning Drive","Richard S. Foster","short story","c","Credited in the album's liner notes; first published in Road & Track, 1973.")]],
+["YYZ",null,"Instrumental"],
+["Limelight",[B("As You Like It","William Shakespeare","play","l","\"All the world's indeed a stage\" reworks Jaques's speech.")]],
+["The Camera Eye",[B("U.S.A. trilogy (1919)","John Dos Passos","novel","c","Named after Dos Passos's 'Camera Eye' sections.")]],
+["Witch Hunt"],["Vital Signs"]]},
+{t:"Signals",y:1982,tr:[
+["Subdivisions"],["The Analog Kid"],["Chemistry",null,"Lyrics co-written by all three"],["Digital Man"],
+["The Weapon",null,"Paraphrases the Lord's Prayer and FDR's \"nothing to fear but fear itself\""],
+["New World Man"],
+["Losing It",[B("For Whom the Bell Tolls","Ernest Hemingway","novel","l","The writer of the second verse is Hemingway; the song ends \"for you, the bell tolls.\""),B("Devotions upon Emergent Occasions","John Donne","prose","p","Source of Hemingway's title phrase.")]],
+["Countdown",null,"About the first Space Shuttle launch"]]},
+{t:"Grace Under Pressure",y:1984,note:"The title is <b>Hemingway's</b> definition of courage.",tr:[
+["Distant Early Warning"],["Afterimage"],["Red Sector A"],["The Enemy Within"],
+["The Body Electric",[B("I Sing the Body Electric","Walt Whitman","poem","p","Title via Whitman (and Bradbury's Twilight Zone episode).")]],
+["Kid Gloves"],["Red Lenses"],
+["Between the Wheels",[B("The Sun Also Rises","Ernest Hemingway","novel","p","Lost-generation echoes noted by fans."),B("In Our Time","Ernest Hemingway","stories","p","Fan-noted echo.")]]]},
+{t:"Power Windows",y:1985,note:"Built around power in many forms; two titles come from <b>John Dos Passos</b>.",tr:[
+["The Big Money",[B("The Big Money","John Dos Passos","novel","l","Title of the third U.S.A. novel.")]],
+["Grand Designs",[B("The Grand Design","John Dos Passos","novel","l","Title echo.")]],
+["Manhattan Project"],["Marathon"],["Territories"],["Middletown Dreams"],["Emotion Detector"],["Mystic Rhythms"]]},
+{t:"Hold Your Fire",y:1987,tr:[
+["Force Ten",null,"Co-written with poet Pye Dubois"],
+["Time Stand Still"],
+["Open Secrets",[PRU("Peart cited Eliot's poem.")]],
+["Second Nature"],
+["Prime Mover",[B("Metaphysics","Aristotle","philosophy","p","Aristotle's 'unmoved mover'.")]],
+["Lock and Key",[B("The Heart Is a Lonely Hunter","Carson McCullers","novel","p","Fan-noted echo.")]],
+["Mission"],["Turn the Page"],["Tai Shan",null,"From Peart's climb of the Chinese mountain"],["High Water"]]},
+{t:"Presto",y:1989,tr:[
+["Show Don't Tell"],["Chain Lightning"],
+["The Pass",[LWF("Wilde's \"in the gutter, but some of us are looking at the stars.\"")]],
+["War Paint"],["Scars"],["Presto"],["Superconductor"],["Anagram (for Mongo)"],
+["Red Tide",[B("The Masque of the Red Death","Edgar Allan Poe","story","p","Fan-noted echo."),B("Do Not Go Gentle into That Good Night","Dylan Thomas","poem","p","Fan-noted echo.")]],
+["Hand Over Fist"],["Available Light"]]},
+{t:"Roll the Bones",y:1991,tr:[
+["Dreamline"],
+["Bravado",[B("The Tidewater Tales","John Barth","novel","c","The key line comes from Barth's novel, with his permission.")]],
+["Roll the Bones",[B("Gonna Roll the Bones","Fritz Leiber","short story","l","Peart called it a vague, half-forgotten inspiration.")]],
+["Face Up"],["Where's My Thing?",null,"Instrumental"],["The Big Wheel"],["Heresy",null,"Written after the fall of the Berlin Wall"],["Ghost of a Chance"],["Neurotica"],["You Bet Your Life"]]},
+{t:"Counterparts",y:1993,note:"An album of dualities, especially male and female.",tr:[
+["Animate",[B("Writings on the anima and animus","Carl Jung","psychology","c","Peart turned to Jung to explore a man addressing his inner feminine side."),B("Sexual Personae","Camille Paglia","criticism","l","Peart said he read Paglia alongside Jung for the song.")]],
+["Stick It Out"],["Cut to the Chase"],["Nobody's Hero"],
+["Between Sun & Moon",[B("There Is a Lake Between Sun & Moon","Pye Dubois","poem","c","Peart reworked Dubois's poem into the song.")]],
+["Alien Shore"],["The Speed of Love"],
+["Double Agent",[B("Gerontion","T.S. Eliot","poem","c","\"Wilderness of mirrors\" is Eliot's phrase.")]],
+["Leave That Thing Alone",null,"Instrumental"],
+["Cold Fire",[B("Jitterbug Perfume","Tom Robbins","novel","p","Source of the phrase 'cold fire'.")]],
+["Everyday Glory"]]},
+{t:"Test for Echo",y:1996,tr:[
+["Test for Echo"],["Driven"],["Half the World"],
+["The Color of Right",[B("The Merchant of Venice","William Shakespeare","play","p","Fan-noted echo.")]],
+["Time and Motion"],
+["Totem",[B("Totem and Taboo","Sigmund Freud","psychology","c","Peart confirmed the title nod.")]],
+["Dog Years"],
+["Virtuality",[B("Auguries of Innocence","William Blake","poem","p","Fan-noted echo.")]],
+["Resist",[LWF("\"I can resist anything but temptation.\"")]],
+["Limbo",null,"Instrumental"],
+["Carve Away the Stone",[B("The Myth of Sisyphus","Albert Camus","essay","p","The Sisyphus myth; Camus's reading is the usual frame.")]]]},
+{t:"Vapor Trails",y:2002,note:"Peart named <b>Edward Abbey, Walt Whitman and Thomas Wolfe</b> as the album's main literary influences.",tr:[
+["One Little Victory"],
+["Ceiling Unlimited",[WOLFE("Peart cited Wolfe (and Oscar Wilde) for this song."),B("Through the Looking-Glass","Lewis Carroll","novel","p","Fan-noted echo.")]],
+["Ghost Rider",null,"From Peart's own 55,000-mile motorcycle journey, later his book Ghost Rider"],
+["Peaceable Kingdom",null,"Named after Edward Hicks's painting"],
+["The Stars Look Down",[B("The Stars Look Down","A.J. Cronin","novel","c","Peart took the title; he said he hadn't read the book.")]],
+["How It Is",[WOLFE("Peart cited Wolfe's novel.")]],
+["Vapor Trail",[B("Black Sun","Edward Abbey","novel","c","Peart said it influenced certain lines."),B("Funeral Blues","W.H. Auden","poem","c","Peart cited Auden.")]],
+["Secret Touch",[B("Victory","Joseph Conrad","novel","c","Peart cited a line from Conrad."),B("Sister of My Heart","Chitra Banerjee Divakaruni","novel","c","Partly inspired \"There is never love without pain.\""),B("What Do Dreams Want?","Marc Ian Barasch (Utne Reader)","article","c","Magazine article on dreams.")]],
+["Earthshine"],["Sweet Miracle"],
+["Nocturne",[B("What Do Dreams Want?","Marc Ian Barasch (Utne Reader)","article","c","Peart said it contributed ideas.")]],
+["Freeze (Part IV of \"Fear\")"],
+["Out of the Cradle",[B("Out of the Cradle Endlessly Rocking","Walt Whitman","poem","c","Title and opening drawn from Whitman.")]]]},
+{t:"Feedback",y:2004,note:"Covers EP: no Peart lyrics, so no reading list.",tr:[
+["Summertime Blues",null,"Eddie Cochran cover"],["Heart Full of Soul",null,"Yardbirds cover"],["For What It's Worth",null,"Buffalo Springfield cover"],["The Seeker",null,"The Who cover"],["Mr. Soul",null,"Buffalo Springfield cover"],["Seven and Seven Is",null,"Love cover"],["Shapes of Things",null,"Yardbirds cover"],["Crossroads",null,"Robert Johnson / Cream cover"]]},
+{t:"Snakes & Arrows",y:2007,note:"Title from the Indian board game that became Snakes and Ladders.",tr:[
+["Far Cry"],
+["Armor and Sword",[B("Dover Beach","Matthew Arnold","poem","c","Peart cited Arnold's poem.")]],
+["Workin' Them Angels"],
+["The Larger Bowl",null,"Written in the pantoum verse form"],
+["Spindrift"],["The Main Monkey Business",null,"Instrumental"],["The Way the Wind Blows"],["Hope",null,"Instrumental"],["Faithless"],["Bravest Face"],["Good News First"],["Malignant Narcissism",null,"Instrumental"],
+["We Hold On",[PRU("Peart cited Eliot's poem.")]]]},
+{t:"Clockwork Angels",y:2012,note:"Concept album built on <b>Voltaire's <i>Candide</i></b>, with nods to John Barth's <i>The Sot-Weed Factor</i>, Diane Ackerman's <i>An Alchemy of Mind</i>, and Cormac McCarthy.",tr:[
+["Caravan",[B("A World Lit Only by Fire","William Manchester","history","c","The title phrase fed the lyric.")]],
+["BU2B"],
+["Clockwork Angels",[CAND("l","The innocent hero arrives in the perfect city.")]],
+["The Anarchist",[B("The Secret Agent","Joseph Conrad","novel","c","Peart named Conrad as a source for the character."),B("In the Skin of a Lion","Michael Ondaatje","novel","c","Peart named Ondaatje too.")]],
+["Carnies",[B("The Deptford Trilogy","Robertson Davies","novels","l","Peart's tour book nods to Davies for the carnival.")]],
+["Halo Effect"],
+["Seven Cities of Gold"],
+["The Wreckers",[B("Jamaica Inn","Daphne du Maurier","novel","c","Ship-wreckers luring vessels onto rocks.")]],
+["Headlong Flight"],["BU2B2"],
+["Wish Them Well",[CAND("l","Candide's hard-won tolerance.")]],
+["The Garden",[CAND("c","Ends where Candide ends: cultivate your garden.")]]]}
+];
+
+const G=id=>["https://www.gutenberg.org/ebooks/"+id,"Project Gutenberg"];
+const LINKS={
+"Anthem":G(1250),"A Tale of Two Cities":G(98),"Doctor Faustus":G(779),"The Odyssey":G(1727),"Don Quixote":G(996),
+"The Birth of Tragedy":G(51356),"Genesis (Jacob's dream, ch. 28)":[...G(10),"King James Bible"],
+"Self-Reliance":[...G(2944),"in Essays: First Series"],"Sir Gawain and the Green Knight":[...G(14568),"original Middle English text"],
+"The Adventures of Tom Sawyer":G(74),"As You Like It":G(1523),"Devotions upon Emergent Occasions":G(23772),
+"I Sing the Body Electric":[...G(1322),"in Leaves of Grass"],"Out of the Cradle Endlessly Rocking":[...G(1322),"in Leaves of Grass"],
+"The Sun Also Rises":G(67138),"In Our Time":G(61085),"A Farewell to Arms":G(75201),
+"The Love Song of J. Alfred Prufrock":[...G(1459),"in Prufrock and Other Observations"],"Gerontion":[...G(1567),"in Poems (1920)"],
+"Lady Windermere's Fan":G(790),"The Masque of the Red Death":G(1064),"The Merchant of Venice":G(1515),
+"Totem and Taboo":G(41214),"Through the Looking-Glass":G(12),"Victory":G(6378),"The Secret Agent":G(974),"Candide":G(19942),
+"Kubla Khan":["https://www.poetryfoundation.org/poems/43991/kubla-khan","Poetry Foundation"],
+"Auguries of Innocence":["https://www.poetryfoundation.org/poems/43650/auguries-of-innocence","Poetry Foundation"],
+"Dover Beach":["https://poets.org/poem/dover-beach","Poets.org"],
+"Metaphysics":["https://classics.mit.edu/Aristotle/metaphysics.html","MIT Internet Classics Archive (W.D. Ross translation)"],
+"What Do Dreams Want?":["https://www.utne.com/community/whatdodreamswant/","Utne Reader, Nov–Dec 2000"]};
+const link=b=>{const L=LINKS[b.t];if(!L)return"";
+ return `<a class="rd" href="${esc(L[0])}" target="_blank" rel="noopener">Read free · ${esc(L[1])}${L[2]?` <span>(${esc(L[2])})</span>`:""}</a>`};
+const RANK={c:3,l:2,p:1};
+const state={album:"all",view:"tracks",q:"",conf:"p",only:false};
+let read={};try{read=JSON.parse(localStorage.getItem("peartRead")||"{}")}catch(e){}
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const key=b=>(b.t+"|"+b.a).toLowerCase();
+const CL={c:"Confirmed",l:"Strong",p:"Possible"};
+const COLORS=["#2f4858","#7a3b2e","#c9a227","#33658a","#5b3758","#3d6b4f","#a4442e","#1f3a5f","#8c6d46","#4e4e6a","#b5651d","#2a5d67"];
+const hue=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return COLORS[h%COLORS.length]};
+
+const albumsEl=document.getElementById("albums");
+const allCount=()=>{const s=new Set();ALBUMS.forEach(a=>a.tr.forEach(t=>(t[1]||[]).forEach(b=>s.add(key(b)))));return s.size};
+albumsEl.innerHTML=`<button class="chipbtn" data-a="all" aria-pressed="true">All albums<small>${ALBUMS.length}</small></button>`+
+ ALBUMS.map((a,i)=>`<button class="chipbtn" data-a="${i}" aria-pressed="false">${esc(a.t)}<small>${a.y}</small></button>`).join("");
+
+function visibleBooks(list){return (list||[]).filter(b=>RANK[b.c]>=RANK[state.conf])}
+function match(a,t,books){const q=state.q;if(!q)return true;
+ return [t[0],t[2]||"",a.t,...books.flatMap(b=>[b.t,b.a])].join(" ").toLowerCase().includes(q)}
+function selected(){return state.album==="all"?ALBUMS.map((a,i)=>[a,i]):[[ALBUMS[+state.album],+state.album]]}
+function collect(){const m=new Map();
+ selected().forEach(([a])=>a.tr.forEach(t=>{const bs=visibleBooks(t[1]);if(!match(a,t,bs))return;
+  bs.forEach(b=>{const k=key(b);if(!m.has(k))m.set(k,{...b,songs:[],best:b.c});const e=m.get(k);e.songs.push(t[0]+" ("+a.t+")");if(RANK[b.c]>RANK[e.best])e.best=b.c})}));
+ return [...m.values()]}
+
+function renderShelf(books){const sh=document.getElementById("shelf");
+ if(!books.length){sh.innerHTML=`<p class="empty">No books on this shelf for the current filters.</p>`;return}
+ sh.innerHTML=books.map(b=>{const h=150+(b.t.length*5)%80;
+  return `<button class="spine" style="height:${h}px;background:${hue(b.t)}" data-k="${esc(key(b))}" title="${esc(b.t)} by ${esc(b.a)}">${esc(b.t)}</button>`}).join("")}
+
+function renderStats(books){const tracks=selected().reduce((n,[a])=>n+a.tr.length,0);
+ const linked=selected().reduce((n,[a])=>n+a.tr.filter(t=>visibleBooks(t[1]).length).length,0);
+ document.getElementById("stats").innerHTML=`<span><b>${tracks}</b>tracks</span><span><b>${linked}</b>tied to reading</span><span><b>${books.length}</b>works on the shelf</span><span><b>${books.filter(b=>LINKS[b.t]).length}</b>free to read online</span>`}
+
+function renderTracks(){let html="",shown=0;
+ selected().forEach(([a])=>{const rows=a.tr.map((t,i)=>{const bs=visibleBooks(t[1]);
+   if(state.only&&!bs.length)return"";if(!match(a,t,bs))return"";shown++;
+   const note=t[2]?`<small>${esc(t[2])}</small>`:"";
+   const right=bs.length?`<div class="books">${bs.map(b=>`<div class="bk"><i>${esc(b.t)}</i><span class="au">${esc(b.a)} · ${esc(b.k)}</span><span class="cf ${b.c}">${CL[b.c]}</span>${b.n?`<span class="nt">${esc(b.n)}</span>`:""}${link(b)}</div>`).join("")}</div>`:`<div class="none">No book tied to this track</div>`;
+   return `<li class="tr${bs.length?"":" nobook"}"><span class="n">${i+1}</span><span class="t">${esc(t[0])}${note}</span>${right}</li>`}).join("");
+  if(!rows)return;
+  html+=`<section class="album"><div class="ahead"><h2>${esc(a.t)}</h2><span class="yr">${a.y}</span><span class="ct">${a.tr.length} tracks</span></div>${a.note?`<p class="anote">${a.note}</p>`:""}<ol class="tracks">${rows}</ol></section>`});
+ return shown?html:`<p class="empty-state">No tracks match. Try clearing the search or widening the evidence level.</p>`}
+
+function renderList(books){if(!books.length)return `<p class="empty-state">No books match these filters.</p>`;
+ books.sort((x,y)=>x.a.localeCompare(y.a)||x.t.localeCompare(y.t));
+ const done=books.filter(b=>read[key(b)]).length,pct=Math.round(done/books.length*100);
+ return `<p class="progress">${done} of ${books.length} read<span class="meter" style="display:block"><i style="width:${pct}%"></i></span></p><ul class="rl">${books.map(b=>{const k=key(b);
+  return `<li class="rc${read[k]?" read":""}" id="b-${esc(k.replace(/[^a-z0-9]+/g,"-"))}"><input type="checkbox" data-k="${esc(k)}" ${read[k]?"checked":""} aria-label="Mark ${esc(b.t)} as read"><div><h3>${esc(b.t)}</h3><div class="au">${esc(b.a)} · ${esc(b.k)} <span class="cf ${b.best}">${CL[b.best]}</span></div>${link(b)}</div><div class="songs">${b.songs.map(s=>`<span class="sg">${esc(s)}</span>`).join("")}</div></li>`}).join("")}</ul>`}
+
+function render(){const books=collect();renderShelf(books);renderStats(books);
+ document.getElementById("main").innerHTML=state.view==="tracks"?renderTracks():renderList(books);
+ document.querySelectorAll("#albums button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.a===state.album));
+ document.getElementById("tab-tracks").setAttribute("aria-selected",state.view==="tracks");
+ document.getElementById("tab-list").setAttribute("aria-selected",state.view==="list");
+ try{localStorage.setItem("peartView",JSON.stringify({album:state.album,view:state.view,conf:state.conf,only:state.only}))}catch(e){}}
+
+try{Object.assign(state,JSON.parse(localStorage.getItem("peartView")||"{}"))}catch(e){}
+document.getElementById("conf").value=state.conf;document.getElementById("only").checked=state.only;
+
+albumsEl.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;state.album=b.dataset.a;render()});
+document.getElementById("tab-tracks").onclick=()=>{state.view="tracks";render()};
+document.getElementById("tab-list").onclick=()=>{state.view="list";render()};
+document.getElementById("q").addEventListener("input",e=>{state.q=e.target.value.trim().toLowerCase();render()});
+document.getElementById("conf").onchange=e=>{state.conf=e.target.value;render()};
+document.getElementById("only").onchange=e=>{state.only=e.target.checked;render()};
+document.getElementById("main").addEventListener("change",e=>{const k=e.target.dataset.k;if(!k)return;
+ if(e.target.checked)read[k]=1;else delete read[k];try{localStorage.setItem("peartRead",JSON.stringify(read))}catch(x){}render()});
+document.getElementById("shelf").addEventListener("click",e=>{const s=e.target.closest(".spine");if(!s)return;
+ state.view="list";render();const el=document.getElementById("b-"+s.dataset.k.replace(/[^a-z0-9]+/g,"-"));
+ if(el){el.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth",block:"center"});el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),1600)}});
+render();
+}
+</script>
+</body>
+</html>
